@@ -97,6 +97,7 @@ if __name__ == '__main__':
     # visualize(nam)
     # visualize(image_names, image_paths)
     mask = one_hot_encode(mask, class_rgb_values).astype('float')
+    mask = reverse_one_hot(mask)
 
     print('Image shape: ', image.shape)
-    print('Mask shape: ', mask.shape)
+    print('Mask shape: ', mask)
