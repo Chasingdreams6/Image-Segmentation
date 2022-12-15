@@ -67,23 +67,22 @@ data_loader = DataLoader(dataset, batch_size=test_batch_size)
 def cal_iou(data_loader, model):
     acc_ratios = []
     class_values = list(range(9))  # [0, 1, 2. ... 9]
-    for class_value in class_values:
-        totcnt = 0
-        tmp_tot = 0
-        for X, Y in data_loader:
-            X, Y = X.to(device), Y.to(device)
-            Y_pred = model(X)
-            Y_pred = torch.argmax(Y_pred, dim=1)
-            torch.set_printoptions(threshold=np.inf)
+    totcnt = [0]*9
+    tmp_tot = [0]*9
+    for X, Y in data_loader:
+        X, Y = X.to(device), Y.to(device)
+        Y_pred = model(X)
+        Y_pred = torch.argmax(Y_pred, dim=1)
+        for class_value in class_values:
             intersection = torch.logical_and(Y == class_value, Y_pred == class_value).sum(dim=(1, 2))
             union = torch.logical_or(Y == class_value, Y_pred == class_value).sum(dim=(1, 2))
             for i in range(Y.shape[0]):
                 if union[i] > 0:
-                    tmp_tot += intersection[i] / union[i]
-                    totcnt += 1
-        acc_ratios.append(tmp_tot / totcnt)
+                    tmp_tot[class_value] += intersection[i] / union[i]
+                    totcnt[class_value] += 1
+    for i in class_values:
+        acc_ratios.append((tmp_tot[i] / totcnt[i]).item())
     return acc_ratios
-
 
 print(cal_iou(data_loader, model))
 
