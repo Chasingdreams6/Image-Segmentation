@@ -34,7 +34,7 @@ device = torch.device(device)
 print(device)
 
 batch_size = 8
-epochs = 50
+epochs = 5
 lr = 0.01
 data_loader = DataLoader(dataset, batch_size=batch_size)
 model = UNet(num_classes=9).to(device)
@@ -59,11 +59,13 @@ for epoch in range(epochs):
 fig, axes = plt.subplots(1, 2, figsize=(10, 5))
 axes[0].plot(step_losses)
 axes[1].plot(epoch_losses)
-plt.savefig("loss.pdf")
+plt.savefig("loss100.pdf")
 model_name = "U-Net.5th"
 torch.save(model.state_dict(), model_name)
 
 val_dir = os.path.join(os.getcwd(), "new_data", "val")
+image_dir = os.path.join(val_dir, "images")
+mask_dir = os.path.join(val_dir, "masks")
 test_batch_size = 8
 dataset = MyDataset(image_dir=image_dir, mask_dir=mask_dir, train_dir=val_dir)
 data_loader = DataLoader(dataset, batch_size=test_batch_size)
@@ -90,4 +92,4 @@ for i in range(test_batch_size):
     axes[i, 2].imshow(label_class_predicted)
     axes[i, 2].set_title("Label Class - Predicted")
 
-plt.savefig("55epoch.pdf")
+plt.savefig("100epoch.pdf")
