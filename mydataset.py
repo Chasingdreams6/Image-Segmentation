@@ -18,6 +18,7 @@ from load_data_example import one_hot_encode, reverse_one_hot
 class MyDataset(Dataset):
 
     def __init__(self, image_dir, mask_dir, train_dir):
+        self.Size = (256, 256)
         self.image_dir = image_dir
         self.mask_dir = mask_dir
         self.image_fns = os.listdir(image_dir)
@@ -34,7 +35,8 @@ class MyDataset(Dataset):
     def transform(self, image):
         transform_ops = transforms.Compose([
             transforms.ToTensor(),
-            transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+            transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+            transforms.Resize(size=self.Size)
         ])
         return transform_ops(image)
 
@@ -50,4 +52,9 @@ class MyDataset(Dataset):
         mask = np.array(mask)
         mask = one_hot_encode(mask, self.class_rgb_values).astype('float')
         mask = reverse_one_hot(mask)
+        mask = torch.Tensor(mask).long()
+        mask = mask.unsqueeze(0) # 升一维
+        mask_transform = transforms.Resize(size=self.Size)
+        mask = mask_transform(mask)
+        mask = mask.squeeze(0) # 还原维度
         return image, mask
