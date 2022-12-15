@@ -15,6 +15,7 @@ from torchvision import transforms
 from tqdm.notebook import tqdm
 from load_data_example import one_hot_encode, reverse_one_hot
 
+
 class MyDataset(Dataset):
 
     def __init__(self, image_dir, mask_dir, train_dir):
@@ -28,6 +29,28 @@ class MyDataset(Dataset):
         self.class_names = self.class_dict['class_names'].tolist()
         # Get class RGB values
         self.class_rgb_values = self.class_dict[['r', 'g', 'b']].values.tolist()
+        self.image_preprocessed = []
+        self.mask_preprocessed = []
+
+        for index in range(0, len(self.image_fns)):
+            image_file_name = self.image_fns[index]
+            image_path = os.path.join(self.image_dir, image_file_name)
+            mask_file_name = self.mask_fns[index]
+            mask_path = os.path.join(self.mask_dir, mask_file_name)
+            image = Image.open(image_path).convert('RGB')
+            image = np.array(image)
+            image = self.transform(image)
+            mask = Image.open(mask_path).convert('RGB')
+            mask = np.array(mask)
+            mask = one_hot_encode(mask, self.class_rgb_values).astype('float')
+            mask = reverse_one_hot(mask)
+            mask = torch.Tensor(mask).long()
+            mask = mask.unsqueeze(0)  # 升一维
+            mask_transform = transforms.Resize(size=self.Size)
+            mask = mask_transform(mask)
+            mask = mask.squeeze(0)  # 还原维度
+            self.image_preprocessed.append(image)
+            self.mask_preprocessed.append(mask)
 
     def __len__(self):
         return len(self.image_fns)
@@ -41,20 +64,4 @@ class MyDataset(Dataset):
         return transform_ops(image)
 
     def __getitem__(self, index):
-        image_file_name = self.image_fns[index]
-        image_path = os.path.join(self.image_dir, image_file_name)
-        mask_file_name = self.mask_fns[index]
-        mask_path = os.path.join(self.mask_dir, mask_file_name)
-        image = Image.open(image_path).convert('RGB')
-        image = np.array(image)
-        image = self.transform(image)
-        mask = Image.open(mask_path).convert('RGB')
-        mask = np.array(mask)
-        mask = one_hot_encode(mask, self.class_rgb_values).astype('float')
-        mask = reverse_one_hot(mask)
-        mask = torch.Tensor(mask).long()
-        mask = mask.unsqueeze(0) # 升一维
-        mask_transform = transforms.Resize(size=self.Size)
-        mask = mask_transform(mask)
-        mask = mask.squeeze(0) # 还原维度
-        return image, mask
+        return self.image_preprocessed[index], self.mask_preprocessed[index]
