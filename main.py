@@ -4,8 +4,6 @@ from PIL import Image
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.cluster import KMeans
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -56,7 +54,7 @@ model.load_state_dict(torch.load("U-Net.160th"))
 # model_name = "U-Net.260th"
 # torch.save(model.state_dict(), model_name)
 
-val_dir = os.path.join(os.getcwd(), "new_data", "val")
+val_dir = os.path.join(os.getcwd(), "new_data", "train")
 image_dir = os.path.join(val_dir, "images")
 mask_dir = os.path.join(val_dir, "masks")
 test_batch_size = 8
