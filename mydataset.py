@@ -65,7 +65,6 @@ class MyDataset(Dataset):
             transforms.ToTensor(),
             transforms.Normalize(mean=(0.482, 0.490, 0.474), std=(0.234, 0.234, 0.254)),
             transforms.Resize(size=self.Size, interpolation=InterpolationMode.NEAREST),
-            transforms.GaussianBlur(kernel_size=7)
         ])
         return transform_ops(image)
 
