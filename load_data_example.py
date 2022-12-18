@@ -93,11 +93,18 @@ if __name__ == '__main__':
     image = cv2.cvtColor(cv2.imread(image_paths[0]), cv2.COLOR_BGR2RGB)
     mask = cv2.cvtColor(cv2.imread(mask_paths[0]), cv2.COLOR_BGR2RGB)
 
-    visualize(original_image=image, mask=mask)
+    #visualize(original_image=image, mask=mask)
     # visualize(nam)
     # visualize(image_names, image_paths)
     mask = one_hot_encode(mask, class_rgb_values).astype('float')
+    print(mask.shape)
     mask = reverse_one_hot(mask)
 
     print('Image shape: ', image.shape)
     print('Mask shape: ', mask)
+
+    # for example_index in range(len(image_paths)):
+    #     image = cv2.cvtColor(cv2.imread(image_paths[example_index]), cv2.COLOR_BGR2RGB)
+    #     mask = cv2.cvtColor(cv2.imread(mask_paths[example_index]), cv2.COLOR_BGR2RGB)
+    #     mask = one_hot_encode(mask, class_rgb_values).astype('float')
+    #     print()

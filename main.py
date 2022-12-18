@@ -28,7 +28,7 @@ device = torch.device(device)
 # lr = 0.01
 # data_loader = DataLoader(dataset, batch_size=batch_size)
 model = UNet(num_classes=9).to(device)
-model.load_state_dict(torch.load("U-Net.160th"))
+model.load_state_dict(torch.load("U-Net.260th"))
 # criterion = nn.CrossEntropyLoss()
 # optimizer = optim.Adam(model.parameters(), lr=lr)
 # step_losses = []
@@ -54,7 +54,7 @@ model.load_state_dict(torch.load("U-Net.160th"))
 # model_name = "U-Net.260th"
 # torch.save(model.state_dict(), model_name)
 
-val_dir = os.path.join(os.getcwd(), "new_data", "train")
+val_dir = os.path.join(os.getcwd(), "new_data", "val")
 image_dir = os.path.join(val_dir, "images")
 mask_dir = os.path.join(val_dir, "masks")
 test_batch_size = 8
@@ -82,7 +82,13 @@ def cal_iou(data_loader, model):
         acc_ratios.append((tmp_tot[i] / totcnt[i]).item())
     return acc_ratios
 
-print(cal_iou(data_loader, model))
+iou = cal_iou(data_loader, model)
+mean = 0
+for i in iou:
+    mean += i
+mean /= 9
+print(mean)
+
 
 # 计算iou
 
