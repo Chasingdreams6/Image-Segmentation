@@ -20,6 +20,7 @@ if os.path.isdir(new_path):
 else:
     os.makedirs(new_path)
 
+csv_src = os.path.join(os.getcwd(), "data", "labels_class_dict.csv")
 # 创建子目录
 for split_name in split_names:
     split_path = new_path + "/" + split_name
@@ -37,6 +38,8 @@ for split_name in split_names:
             os.remove(path)
     else:
         os.makedirs(p2)
+    csv_to = os.path.join(split_path, "labels_class_dict.csv")
+    copy2(csv_src, csv_to)
 
 
 def split(full_list, shuffle=False, ratio=0.5):

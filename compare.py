@@ -28,6 +28,8 @@ milestones = [10, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300, 400]
 device = "cuda:0" if torch.cuda.is_available() else "cpu"
 device = torch.device(device)
 
+if os.path.exists("saves") == False:
+    os.makedirs("saves")
 
 def get_model_name(s, lens):
     return os.path.join(os.getcwd(), "saves/U-Net-" + str(s + lens) + "th.model")
